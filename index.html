@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Figuring Sh!t Out — a podcast by Vanessa Fontana</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --cream: #f3e3c0;
+    --gold: #d8a558;
+    --goldL: #f0c87e;
+    --umber: #1d050c;
+    --ink: #3a2412;
+    --inkSoft: #5a3f22;
+    --paper: #e9dcc2;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: auto; }
+  body {
+    background: var(--umber);
+    overflow-x: hidden;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
+    color: var(--cream);
+  }
+  ::selection { background: var(--gold); color: var(--umber); }
+
+  #scene { position: fixed; inset: 0; z-index: 0; display: block; }
+
+  /* ---------- film treatment ---------- */
+  #vignette {
+    position: fixed; inset: 0; pointer-events: none; z-index: 4;
+    background: radial-gradient(ellipse 125% 100% at 50% 45%, transparent 38%, rgba(26,2,8,0.66) 100%);
+  }
+  #grain {
+    position: fixed; inset: -110px; pointer-events: none; z-index: 5;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.085; mix-blend-mode: overlay;
+    animation: grainShift 0.5s steps(3) infinite;
+  }
+  @keyframes grainShift {
+    0% { transform: translate(0,0); } 33% { transform: translate(-42px,26px); }
+    66% { transform: translate(24px,-38px); } 100% { transform: translate(-18px,-20px); }
+  }
+  #fade {
+    position: fixed; inset: 0; background: #120309; z-index: 8;
+    pointer-events: none; opacity: 1; transition: opacity 2.4s ease;
+  }
+  body.lit #fade { opacity: 0; }
+
+  /* ---------- nav ---------- */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 7;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px clamp(20px, 4vw, 56px);
+    background: linear-gradient(180deg, rgba(24,3,9,0.78), transparent);
+    pointer-events: none;
+  }
+  nav a { pointer-events: auto; text-decoration: none; }
+  #brand {
+    color: var(--cream); font-weight: 600; font-style: italic;
+    font-size: 22px; letter-spacing: 0.04em;
+  }
+  #brand em { color: var(--goldL); }
+  #navlinks { display: flex; gap: clamp(14px, 2.6vw, 38px); }
+  #navlinks a {
+    color: var(--gold); text-transform: uppercase;
+    font-size: 12px; letter-spacing: 0.32em;
+    opacity: 0.85; transition: color 0.3s, opacity 0.3s;
+  }
+  #navlinks a:hover { color: var(--goldL); opacity: 1; }
+  @media (max-width: 640px) { #navlinks a:nth-child(n+4) { display: none; } }
+
+  /* ---------- layout ---------- */
+  main { position: relative; z-index: 2; }
+  section { position: relative; padding: 0 clamp(22px, 6vw, 90px); }
+  .inner { max-width: min(1560px, 92vw); margin: 0 auto; position: relative; }
+
+  .sky { min-height: 100vh; display: flex; align-items: center; }
+  .sky .inner { width: 100%; }
+
+  /* huge faint roman numeral, parallaxed in DOM */
+  .num {
+    position: absolute; top: -0.25em; right: -0.05em; z-index: -1;
+    font-size: clamp(140px, 30vw, 420px); font-weight: 400;
+    color: transparent; -webkit-text-stroke: 1px rgba(200,155,82,0.22);
+    line-height: 1; pointer-events: none; user-select: none;
+    will-change: transform;
+  }
+  .paper .num { -webkit-text-stroke: 1px rgba(90,63,34,0.20); }
+
+  .kicker {
+    color: var(--gold); text-transform: uppercase;
+    font-size: clamp(11px, 1.4vw, 14px); letter-spacing: 0.42em; text-indent: 0.42em;
+    display: flex; align-items: center; gap: 1.4em;
+    margin-bottom: 3.2vh;
+  }
+  .kicker::before { content: ""; width: 4.5em; height: 1px; background: linear-gradient(90deg, transparent, var(--gold)); }
+  .kicker::after  { content: ""; width: 4.5em; height: 1px; background: linear-gradient(90deg, var(--gold), transparent); }
+  .kicker.left { justify-content: flex-start; }
+  .kicker.left::after { display: none; }
+  .center { text-align: center; }
+  .center .kicker { justify-content: center; }
+
+  h1, h2 { font-weight: 500; line-height: 0.98; }
+  h1 { font-size: clamp(46px, 9.4vw, 170px); letter-spacing: 0.01em; }
+  h2 { font-size: clamp(38px, 6.6vw, 118px); }
+  h1 em, h2 em, .gold-i { font-style: italic; font-weight: 600; color: var(--goldL); }
+  .paper h1 em, .paper h2 em { color: #9c6b1f; }
+
+  .lede {
+    font-size: clamp(19px, 2.3vw, 31px); line-height: 1.5;
+    max-width: 34em; margin-top: 3.5vh; color: rgba(243,227,192,0.92);
+  }
+  .paper .lede { color: var(--inkSoft); }
+
+  /* ---------- ctas ---------- */
+  .ctas { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 5vh; }
+  .cta {
+    display: inline-block; text-decoration: none;
+    color: var(--cream); border: 1px solid rgba(200,155,82,0.65);
+    padding: 15px 34px; border-radius: 999px;
+    text-transform: uppercase; font-size: 13px; letter-spacing: 0.28em; text-indent: 0.28em;
+    transition: background 0.35s, color 0.35s, border-color 0.35s;
+    background: rgba(22,9,10,0.25);
+  }
+  .cta:hover { background: var(--gold); color: var(--umber); border-color: var(--gold); }
+  .cta.solid { background: var(--gold); color: var(--umber); }
+  .cta.solid:hover { background: var(--goldL); }
+  .paper .cta { color: var(--ink); border-color: rgba(90,63,34,0.55); background: transparent; }
+  .paper .cta:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  /* ---------- parchment sections ---------- */
+  .paper {
+    color: var(--ink);
+    padding-top: clamp(80px, 14vh, 160px);
+    padding-bottom: clamp(80px, 14vh, 160px);
+    margin: 18vh 0;
+  }
+  .paper-bg { position: absolute; inset: 0; z-index: -2; background: var(--paper); }
+  .tear {
+    position: absolute; left: 0; right: 0; height: 92px; z-index: -1;
+    background-repeat: repeat-x; background-size: auto 100%;
+  }
+  .tear.top { bottom: 100%; }
+  .tear.bottom { top: 100%; transform: scaleY(-1); }
+
+  /* ---------- manifesto list ---------- */
+  .vows { margin-top: 6vh; display: grid; gap: 0; max-width: 880px; }
+  .vow {
+    display: grid; grid-template-columns: 4.5em 1fr; align-items: baseline;
+    padding: 3.2vh 0; border-top: 1px solid rgba(90,63,34,0.28);
+    font-size: clamp(20px, 2.8vw, 34px); line-height: 1.25;
+  }
+  .vow:last-child { border-bottom: 1px solid rgba(90,63,34,0.28); }
+  .vow .rn { font-style: italic; color: #9c6b1f; font-size: 0.72em; letter-spacing: 0.1em; }
+  .vow em { font-style: italic; color: #9c6b1f; }
+
+  /* ---------- stats ---------- */
+  .stats { display: flex; gap: clamp(26px, 6vw, 80px); margin-top: 6vh; flex-wrap: wrap; }
+  .stat .big {
+    font-size: clamp(40px, 5.4vw, 74px); font-weight: 500; font-style: italic;
+    color: #9c6b1f; line-height: 1;
+  }
+  .stat .lab {
+    margin-top: 8px; text-transform: uppercase; font-size: 12px;
+    letter-spacing: 0.3em; color: var(--inkSoft);
+  }
+
+  /* ---------- cards ---------- */
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 3vw, 44px); margin-top: 7vh; }
+  @media (max-width: 760px) { .cards { grid-template-columns: 1fr; } }
+  .card {
+    border: 1px solid rgba(200,155,82,0.4); border-radius: 4px;
+    padding: clamp(26px, 3.4vw, 48px);
+    background: rgba(30,6,12,0.5); backdrop-filter: blur(2px);
+  }
+  .card h3 { font-size: clamp(26px, 3vw, 40px); font-weight: 500; font-style: italic; color: var(--goldL); }
+  .card .tag { text-transform: uppercase; font-size: 11px; letter-spacing: 0.32em; color: var(--gold); margin-bottom: 14px; }
+  .card p { margin-top: 16px; font-size: clamp(16px, 1.7vw, 20px); line-height: 1.55; color: rgba(236,220,180,0.88); }
+  .card a { margin-top: 24px; }
+
+  /* ---------- closing ---------- */
+  #closing { min-height: 110vh; display: flex; align-items: center; }
+  #closing h2 { font-size: clamp(34px, 5.8vw, 102px); line-height: 1.12; max-width: 14em; margin: 0 auto; }
+
+  /* ---------- collage photos ---------- */
+  .split { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(34px, 5vw, 90px); align-items: center; }
+  @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
+  .photo {
+    display: block; margin: 0; position: relative; overflow: hidden;
+    background: linear-gradient(160deg, #ffffff, #f6f4ef);
+    padding: clamp(10px, 1.2vw, 18px);
+    padding-bottom: clamp(34px, 3vw, 52px);
+    box-shadow: 0 30px 70px rgba(12,1,6,0.6), 0 4px 14px rgba(12,1,6,0.4),
+                inset 0 0 0 1px rgba(255,255,255,0.9);
+    transform: rotate(var(--rot, 0deg));
+  }
+  .photo::after { /* glossy print — the sheen travels as you scroll */
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background:
+      linear-gradient(115deg, transparent 32%, rgba(255,255,255,0) 42%,
+        rgba(255,255,255,0.16) 50%, rgba(255,255,255,0.03) 56%, transparent 66%),
+      linear-gradient(180deg, rgba(255,255,255,0.04), transparent 35%);
+    background-size: 260% 260%, 100% 100%;
+    background-position: var(--gp, 50%) 50%, 0 0;
+  }
+  .photo img { display: block; width: 100%; filter: sepia(0.16) saturate(1.06) contrast(0.97); }
+  .photo figcaption {
+    margin-top: 14px; text-align: center; font-style: italic;
+    color: #6e655a; font-size: clamp(13px, 1.2vw, 17px); letter-spacing: 0.14em;
+  }
+
+  /* ---------- listener quotes ---------- */
+  .quote {
+    border-left: 2px solid rgba(156,107,31,0.45);
+    padding: 4px 0 4px 24px; margin: 30px 0;
+    font-size: clamp(17px, 1.8vw, 23px); line-height: 1.5;
+    font-style: italic; color: var(--inkSoft);
+  }
+  .quote .who {
+    display: block; margin-top: 10px; font-style: normal;
+    text-transform: uppercase; font-size: 11px; letter-spacing: 0.3em; color: #9c6b1f;
+  }
+
+  /* ---------- mailing list ---------- */
+  #mailing { max-width: min(1560px, 92vw); margin: 0 auto 9vh; }
+  #mailing .head { text-transform: uppercase; font-size: 13px; letter-spacing: 0.34em; color: var(--gold); }
+  #mailing p { font-size: clamp(16px, 1.6vw, 20px); color: rgba(243,227,192,0.85); max-width: 38em; margin-top: 12px; line-height: 1.5; }
+  #mailing form { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 26px; }
+  #mailing input {
+    background: rgba(30,6,12,0.5); border: 1px solid rgba(216,165,88,0.5);
+    color: var(--cream); font-family: inherit; font-size: 16px;
+    padding: 14px 22px; border-radius: 999px; min-width: 220px; outline: none;
+  }
+  #mailing input::placeholder { color: rgba(216,165,88,0.75); letter-spacing: 0.06em; }
+  #mailing input:focus { border-color: var(--goldL); }
+  #mailing button { cursor: pointer; font-family: inherit; }
+
+  /* ---------- footer ---------- */
+  footer {
+    position: relative; z-index: 2;
+    padding: 10vh clamp(22px, 6vw, 90px) 6vh;
+    border-top: 1px solid rgba(200,155,82,0.25);
+    background: linear-gradient(180deg, transparent, rgba(22,3,9,0.85));
+  }
+  .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: min(1560px, 92vw); margin: 0 auto; }
+  @media (max-width: 640px) { .cols { grid-template-columns: 1fr; gap: 40px; } }
+  .col .head { text-transform: uppercase; font-size: 12px; letter-spacing: 0.34em; color: var(--gold); margin-bottom: 18px; }
+  .col a { display: block; color: var(--cream); text-decoration: none; font-size: 19px; padding: 5px 0; opacity: 0.85; transition: opacity 0.3s, color 0.3s; font-style: italic; }
+  .col a:hover { opacity: 1; color: var(--goldL); }
+  #fine {
+    max-width: min(1560px, 92vw); margin: 9vh auto 0; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    color: rgba(200,155,82,0.6); font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase;
+  }
+
+  /* ---------- reveal on scroll ---------- */
+  .reveal { opacity: 0; transform: translateY(46px); transition: opacity 1.3s ease, transform 1.3s cubic-bezier(0.16,1,0.3,1); transition-delay: var(--d, 0s); }
+  .reveal.shown { opacity: 1; transform: translateY(0); }
+  .photo.reveal { transform: translateY(46px) rotate(var(--rot, 0deg)); }
+  .photo.reveal.shown { transform: translateY(0) rotate(var(--rot, 0deg)); }
+
+  /* hero entrance */
+  #hero .w { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: 0.26em; margin-bottom: -0.26em; }
+  #hero .w > span { display: inline-block; transform: translateY(130%); transition: transform 1.5s cubic-bezier(0.16,1,0.3,1); }
+  body.lit #hero .w > span { transform: translateY(0); }
+  body.lit #hero .w:nth-child(2) > span { transition-delay: 0.12s; }
+  body.lit #hero .w:nth-child(3) > span { transition-delay: 0.24s; }
+  #hero .sub { opacity: 0; transition: opacity 2s ease 0.9s; }
+  body.lit #hero .sub { opacity: 1; }
+
+  #scrollcue {
+    position: absolute; bottom: 4.5vh; left: 50%; transform: translateX(-50%);
+    color: var(--gold); font-size: 11px; letter-spacing: 0.4em; text-indent: 0.4em; text-transform: uppercase;
+    opacity: 0; transition: opacity 2s ease 2s;
+  }
+  body.lit #scrollcue { opacity: 0.75; }
+  #scrollcue::after {
+    content: ""; display: block; width: 1px; height: 44px; margin: 12px auto 0;
+    background: linear-gradient(180deg, var(--gold), transparent);
+    animation: cueDrop 2.2s ease-in-out infinite;
+  }
+  @keyframes cueDrop { 0%,100% { transform: scaleY(0.4); transform-origin: top; opacity: 0.4; } 50% { transform: scaleY(1); opacity: 1; } }
+</style>
+</head>
+<body>
+<canvas id="scene"></canvas>
+
+<nav>
+  <a id="brand" href="#hero">Figuring <em>Sh!t</em> Out</a>
+  <div id="navlinks">
+    <a href="#manifesto">About</a>
+    <a href="#podcast">Listen</a>
+    <a href="#community">Metamorphosis</a>
+    <a href="https://www.figuringshtout.com/contact" target="_blank" rel="noopener">Contact</a>
+  </div>
+</nav>
+
+<main>
+  <!-- I · hero -->
+  <section class="sky" id="hero">
+    <div class="inner center">
+      <div class="kicker sub">a podcast by Vanessa Fontana</div>
+      <h1>
+        <span class="w"><span>Figuring&nbsp;</span></span><span class="w"><span><em>Sh!t</em>&nbsp;</span></span><span class="w"><span>Out?</span></span>
+      </h1>
+      <p class="lede sub" style="margin-left:auto;margin-right:auto;">
+        <span class="gold-i">You're in the right place.</span><br />
+        A podcast, a community, and a movement for brave living, awakening,
+        and creatively reclaiming your power in a chaotic world.
+      </p>
+      <div class="ctas sub" style="justify-content:center;">
+        <a class="cta solid" href="https://open.spotify.com/show/4rzSPwl3L6JHcDzrVt3rqV" target="_blank" rel="noopener">Listen to the podcast</a>
+        <a class="cta" href="https://www.figuringshtout.com/metamorphosis" target="_blank" rel="noopener">Join Metamorphosis</a>
+        <a class="cta" href="https://www.figuringshtout.com/contact" target="_blank" rel="noopener">Get in touch</a>
+      </div>
+    </div>
+    <div id="scrollcue">scroll</div>
+  </section>
+
+  <!-- II · manifesto (parchment) -->
+  <section class="paper" id="manifesto">
+    <div class="paper-bg"></div>
+    <div class="tear top"></div><div class="tear bottom"></div>
+    <div class="inner">
+      <div class="num" data-depth="0.12">II</div>
+      <div class="kicker left reveal">the movement</div>
+      <h2 class="reveal">Turning survival<br />into <em>self&#8209;expression</em></h2>
+      <p class="lede reveal" style="--d:0.15s">
+        Figuring Sh!t Out exists as a mirror and a movement for those
+        navigating the duality of modern life:
+      </p>
+      <div class="vows">
+        <div class="vow reveal" style="--d:0.05s"><span class="rn">i.</span><span>To find <em>flow</em> in the highs and lows</span></div>
+        <div class="vow reveal" style="--d:0.12s"><span class="rn">ii.</span><span>To embrace uncertainty with <em>surrender and courage</em></span></div>
+        <div class="vow reveal" style="--d:0.19s"><span class="rn">iii.</span><span>To live fully &mdash; with <em>choice, presence, and intention</em></span></div>
+        <div class="vow reveal" style="--d:0.26s"><span class="rn">iv.</span><span>And to heal, grow, feel, and <em>enjoy the unfolding</em> along the way</span></div>
+      </div>
+      <p class="lede reveal" style="--d:0.1s">
+        Through storytelling, spirituality, ancient philosophy, modern psychology,
+        neuroscience, and creative reclamation &mdash; a way to live boldly within
+        the paradox of <span class="gold-i" style="color:#9c6b1f;">the shadow and the light.</span>
+      </p>
+      <div data-depth="0.06" style="max-width: 560px; margin-top: 8vh;">
+        <figure class="photo reveal" style="--rot:1.6deg; --d:0.2s">
+          <img src="assets/park.png" alt="An autumn afternoon in the park" />
+          <figcaption>enjoy the unfolding along the way</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- III · vanessa -->
+  <section class="sky" id="about">
+    <div class="inner">
+      <div class="num" data-depth="0.12">III</div>
+      <div class="split">
+        <div>
+          <div class="kicker left reveal">created by Vanessa Fontana</div>
+          <h2 class="reveal">Hi, I'm <em>Vanessa.</em></h2>
+          <p class="lede reveal" style="--d:0.15s">
+            A writer, creator, facilitator, and speaker. I explore what it means to
+            turn survival into self&#8209;expression &mdash; to live creatively in the midst
+            of chaos and find clarity even as we're still becoming.
+          </p>
+          <p class="lede reveal" style="--d:0.25s">
+            My work is about <span class="gold-i">courage in motion</span>: embracing the duality
+            of being and becoming, and creating a life that feels like your own &mdash;
+            even while you're still figuring sh!t out.
+          </p>
+          <div class="ctas reveal" style="--d:0.35s">
+            <a class="cta" href="https://www.figuringshtout.com/about" target="_blank" rel="noopener">Read more</a>
+          </div>
+        </div>
+        <div>
+          <div data-depth="0.05">
+            <figure class="photo reveal" style="--rot:-2.6deg">
+              <img src="assets/vanessa-street.png" alt="Vanessa walking through New York City" />
+              <figcaption>new york city, where it all began</figcaption>
+            </figure>
+          </div>
+          <div data-depth="0.09" style="margin: -6vh 0 0 16%; max-width: 84%;">
+            <figure class="photo reveal" style="--rot:2.2deg; --d:0.2s">
+              <img src="assets/bench.png" alt="Vanessa reading on a bench in Central Park" />
+              <figcaption>somewhere in central park</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IV · podcast (parchment) -->
+  <section class="paper" id="podcast">
+    <div class="paper-bg"></div>
+    <div class="tear top"></div><div class="tear bottom"></div>
+    <div class="inner">
+      <div class="num" data-depth="0.12">IV</div>
+      <div class="split">
+        <div>
+          <div class="kicker left reveal">the podcast</div>
+          <h2 class="reveal">Make <em>art</em> of<br />your existence</h2>
+          <p class="lede reveal" style="--d:0.15s">
+            Launched from a New York City bedroom, Figuring Sh!t Out has grown into
+            a top 5% podcast reaching a worldwide audience &mdash; diving into shadow work,
+            inner&#8209;child healing, clarity, courage, self&#8209;trust, and living a life of purpose.
+          </p>
+          <p class="lede reveal" style="--d:0.25s">
+            At once poetic and practical, the show invites you to live deeply and embrace
+            the paradox of never having it all figured out &mdash; <em
+            style="color:#9c6b1f;">but moving forward anyways.</em>
+          </p>
+          <div class="stats">
+            <div class="stat reveal" style="--d:0.1s"><div class="big">top 5%</div><div class="lab">podcasts worldwide</div></div>
+            <div class="stat reveal" style="--d:0.2s"><div class="big">100+</div><div class="lab">episodes &amp; counting</div></div>
+            <div class="stat reveal" style="--d:0.3s"><div class="big">sundays</div><div class="lab">new episodes weekly</div></div>
+          </div>
+          <div class="ctas reveal" style="--d:0.2s">
+            <a class="cta" href="https://open.spotify.com/show/4rzSPwl3L6JHcDzrVt3rqV" target="_blank" rel="noopener">Spotify</a>
+            <a class="cta" href="https://podcasts.apple.com/us/podcast/figuring-sh-t-out/id1681227545" target="_blank" rel="noopener">Apple Podcasts</a>
+            <a class="cta" href="https://www.youtube.com/@figuringshitout" target="_blank" rel="noopener">YouTube</a>
+          </div>
+        </div>
+        <div data-depth="0.07">
+          <figure class="photo reveal" style="--rot:2.4deg; --d:0.15s">
+            <img src="assets/cover-s2.png" alt="Figuring Sh!t Out — season two cover, Growing Into You" />
+            <figcaption>season two &mdash; growing into you</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- V · community -->
+  <section class="sky" id="community" style="min-height:120vh;">
+    <div class="inner center">
+      <div class="num" data-depth="0.12" style="right:auto;left:-0.05em;">V</div>
+      <div class="kicker reveal">is a creative life calling you?</div>
+      <h2 class="reveal">Community. Containers.<br /><em>Connection.</em></h2>
+      <div class="cards" style="text-align:left;">
+        <div class="card reveal" style="--d:0.1s">
+          <div class="tag">launching this spring</div>
+          <h3>Metamorphosis</h3>
+          <p>A nervous&#8209;system&#8209;led sanctuary for creative self&#8209;discovery. Weekly calls,
+          guided practices, and a living creative community to reconnect with your voice,
+          unlock creative flow, and bring your ideas to life.</p>
+          <a class="cta" href="https://www.figuringshtout.com/metamorphosis" target="_blank" rel="noopener">Join the waitlist</a>
+        </div>
+        <div class="card reveal" style="--d:0.22s">
+          <div class="tag">a 5-week journey</div>
+          <h3>The Road Less Travelers</h3>
+          <p>Where transformation meets community. Ritual, creative reclamation, somatic
+          practice, tools of ancient wisdom, and the power of being witnessed by others
+          walking the same path.</p>
+          <a class="cta" href="https://www.figuringshtout.com/community-guidebooks" target="_blank" rel="noopener">Learn more</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VI · listeners (parchment) -->
+  <section class="paper" id="voices">
+    <div class="paper-bg"></div>
+    <div class="tear top"></div><div class="tear bottom"></div>
+    <div class="inner">
+      <div class="num" data-depth="0.12">VI</div>
+      <div class="kicker left reveal">from the listeners</div>
+      <h2 class="reveal">Words that found<br /><em>their way back</em></h2>
+      <div class="split" style="align-items: start; margin-top: 5vh;">
+        <div>
+          <div class="quote reveal" style="--d:0.05s">&ldquo;I just listened to all your podcast episodes
+            and my ears have been blessed. You are so well spoken and everything you say is just so mind
+            opening, and heart opening. I'm carrying your words with me today in the most positive
+            way.&rdquo;<span class="who">a listener</span></div>
+          <div class="quote reveal" style="--d:0.15s">&ldquo;I'm going through a really big transition
+            phase in my life and I discovered your TikTok and your podcast exactly when I needed it.
+            I'm really trying to enjoy the journey and enjoy the not&#8209;knowing, and you have been so
+            helpful in that.&rdquo;<span class="who">a listener</span></div>
+          <div class="quote reveal" style="--d:0.25s">&ldquo;My mom loved the episode so much. She has a
+            lot of generational trauma that she wasn't ready to accept for so long, and your episode
+            helped her gently, and slowly introduced some concepts to her that I was having a hard time
+            explaining myself.&rdquo;<span class="who">a listener</span></div>
+        </div>
+        <div>
+          <div class="quote reveal" style="--d:0.1s">&ldquo;You are so gentle with your words and have
+            truly inspired me to be gentle with myself. That's why I reached out to you &mdash; to let
+            you know how you have changed my life.&rdquo;<span class="who">a listener</span></div>
+          <div data-depth="0.07" style="margin-top: 6vh;">
+            <figure class="photo reveal" style="--rot:-2.2deg; --d:0.2s">
+              <img src="assets/butterfly-hand.png" alt="A monarch butterfly resting on a hand" />
+              <figcaption>healing and transformation</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VII · closing -->
+  <section class="sky center" id="closing">
+    <div class="inner">
+      <div class="kicker reveal">after all</div>
+      <h2 class="reveal">We are always just<br /><em>walking each other home.</em></h2>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div id="mailing" class="reveal">
+    <div class="head">Join the mailing list</div>
+    <p>To receive tools for figuring sh!t out, a free 5&#8209;minute grounding meditation,
+    &amp; 10% off merch.</p>
+    <form action="https://www.figuringshtout.com/" method="get" target="_blank" rel="noopener">
+      <input type="text" name="name" placeholder="Name" aria-label="Name" />
+      <input type="email" name="email" placeholder="Email address" aria-label="Email address" />
+      <button class="cta solid" type="submit">Submit</button>
+    </form>
+  </div>
+  <div class="cols">
+    <div class="col reveal">
+      <div class="head">Listen</div>
+      <a href="https://open.spotify.com/show/4rzSPwl3L6JHcDzrVt3rqV" target="_blank" rel="noopener">Spotify</a>
+      <a href="https://podcasts.apple.com/us/podcast/figuring-sh-t-out/id1681227545" target="_blank" rel="noopener">Apple Podcasts</a>
+      <a href="https://www.youtube.com/@figuringshitout" target="_blank" rel="noopener">YouTube</a>
+    </div>
+    <div class="col reveal" style="--d:0.12s">
+      <div class="head">Follow</div>
+      <a href="https://www.instagram.com/byvanessafontana/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.tiktok.com/@butterflyfountain" target="_blank" rel="noopener">TikTok</a>
+    </div>
+    <div class="col reveal" style="--d:0.24s">
+      <div class="head">Get in touch</div>
+      <a href="https://www.figuringshtout.com/contact" target="_blank" rel="noopener">Write to V</a>
+      <a href="https://www.figuringshtout.com/contact" target="_blank" rel="noopener">Partnerships</a>
+    </div>
+  </div>
+  <div id="fine">
+    <span>Figuring Sh!t Out &copy; 2026</span>
+    <span>healing and transformation</span>
+    <span>for the in&#8209;between &middot; being &amp; becoming</span>
+  </div>
+</footer>
+
+<div id="vignette"></div>
+<div id="grain"></div>
+<div id="fade"></div>
+
+<script type="importmap">
+  { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+
+/* ============================================================
+   FIGURING SH!T OUT — renaissance collage site
+   real art: Adolphe Millot, "Papillons" lithograph (c. 1900)
+   architecture (after shopify editions winter '26):
+   fixed WebGL canvas pinned behind, DOM scrolls over it,
+   smoothed scroll drives a perspective camera through a deep
+   layered world — depth = real z, parallax falls out for free.
+   ============================================================ */
+
+const loadImage = src => new Promise((res, rej) => {
+  const i = new Image();
+  i.onload = () => res(i);
+  i.onerror = rej;
+  i.src = src;
+});
+
+function cropToCanvas(img, fx, fy, fw, fh, maxW = 700) {
+  const sw = img.width * fw, sh = img.height * fh;
+  const scale = Math.min(1, maxW / sw);
+  const c = document.createElement('canvas');
+  c.width = Math.round(sw * scale);
+  c.height = Math.round(sh * scale);
+  c.getContext('2d').drawImage(img, img.width * fx, img.height * fy, sw, sh, 0, 0, c.width, c.height);
+  return c;
+}
+
+// remove lithograph paper: flood-fill from borders (median border colour),
+// clear masked corners so neighbouring specimens disconnect,
+// then keep only the largest opaque island, then soften the cut edge
+function keyOutPaper(c, threshold = 52, clears = []) {
+  const w = c.width, h = c.height;
+  const ctx = c.getContext('2d');
+  const id = ctx.getImageData(0, 0, w, h);
+  const d = id.data;
+
+  const rs = [], gs = [], bs = [];
+  const sample = (x, y) => { const i = (y * w + x) * 4; rs.push(d[i]); gs.push(d[i + 1]); bs.push(d[i + 2]); };
+  for (let x = 0; x < w; x += 3) { sample(x, 0); sample(x, h - 1); }
+  for (let y = 0; y < h; y += 3) { sample(0, y); sample(w - 1, y); }
+  const med = a => { a.sort((p, q) => p - q); return a[a.length >> 1]; };
+  const pr = med(rs), pg = med(gs), pb = med(bs);
+  const t2 = threshold * threshold;
+  const isPaper = i => {
+    const dr = d[i] - pr, dg = d[i + 1] - pg, db = d[i + 2] - pb;
+    return dr * dr + dg * dg + db * db < t2;
+  };
+
+  const visited = new Uint8Array(w * h);
+  const queue = [];
+  for (let x = 0; x < w; x++) queue.push(x, x + (h - 1) * w);
+  for (let y = 0; y < h; y++) queue.push(y * w, y * w + w - 1);
+  while (queue.length) {
+    const p = queue.pop();
+    if (visited[p] || !isPaper(p * 4)) continue;
+    visited[p] = 1;
+    const x = p % w, y = (p / w) | 0;
+    if (x > 0) queue.push(p - 1);
+    if (x < w - 1) queue.push(p + 1);
+    if (y > 0) queue.push(p - w);
+    if (y < h - 1) queue.push(p + w);
+  }
+  for (let p = 0; p < w * h; p++) if (visited[p]) d[p * 4 + 3] = 0;
+
+  // fractional [x0, y0, x1, y1] rects to wipe — severs slivers of neighbours
+  for (const [cx0, cy0, cx1, cy1] of clears) {
+    const X0 = Math.floor(cx0 * w), X1 = Math.ceil(cx1 * w);
+    const Y0 = Math.floor(cy0 * h), Y1 = Math.ceil(cy1 * h);
+    for (let y = Y0; y < Y1; y++) for (let x = X0; x < X1; x++) d[(y * w + x) * 4 + 3] = 0;
+  }
+
+  const label = new Int32Array(w * h).fill(-1);
+  let best = -1, bestSize = 0, n = 0;
+  const stack = [];
+  for (let p0 = 0; p0 < w * h; p0++) {
+    if (label[p0] !== -1 || d[p0 * 4 + 3] === 0) continue;
+    let size = 0;
+    label[p0] = n;
+    stack.push(p0);
+    while (stack.length) {
+      const p = stack.pop();
+      size++;
+      const x = p % w, y = (p / w) | 0;
+      if (x > 0 && label[p - 1] === -1 && d[(p - 1) * 4 + 3] > 0) { label[p - 1] = n; stack.push(p - 1); }
+      if (x < w - 1 && label[p + 1] === -1 && d[(p + 1) * 4 + 3] > 0) { label[p + 1] = n; stack.push(p + 1); }
+      if (y > 0 && label[p - w] === -1 && d[(p - w) * 4 + 3] > 0) { label[p - w] = n; stack.push(p - w); }
+      if (y < h - 1 && label[p + w] === -1 && d[(p + w) * 4 + 3] > 0) { label[p + w] = n; stack.push(p + w); }
+    }
+    if (size > bestSize) { bestSize = size; best = n; }
+    n++;
+  }
+  for (let p = 0; p < w * h; p++) if (d[p * 4 + 3] > 0 && label[p] !== best) d[p * 4 + 3] = 0;
+
+  const a0 = new Uint8ClampedArray(w * h);
+  for (let p = 0; p < w * h; p++) a0[p] = d[p * 4 + 3];
+  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+    const p = y * w + x;
+    d[p * 4 + 3] = (a0[p] * 4 + a0[p - 1] + a0[p + 1] + a0[p - w] + a0[p + w]) / 8;
+  }
+  ctx.putImageData(id, 0, 0);
+  return c;
+}
+
+// trim a keyed canvas to its opaque bounding box (plus padding)
+function trimAlpha(c, pad = 6) {
+  const ctx = c.getContext('2d');
+  const { data: d } = ctx.getImageData(0, 0, c.width, c.height);
+  let x0 = c.width, y0 = c.height, x1 = 0, y1 = 0;
+  for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) {
+    if (d[(y * c.width + x) * 4 + 3] > 8) {
+      if (x < x0) x0 = x; if (x > x1) x1 = x;
+      if (y < y0) y0 = y; if (y > y1) y1 = y;
+    }
+  }
+  x0 = Math.max(0, x0 - pad); y0 = Math.max(0, y0 - pad);
+  x1 = Math.min(c.width - 1, x1 + pad); y1 = Math.min(c.height - 1, y1 + pad);
+  const out = document.createElement('canvas');
+  out.width = x1 - x0 + 1; out.height = y1 - y0 + 1;
+  out.getContext('2d').drawImage(c, -x0, -y0);
+  return out;
+}
+
+function texFromCanvas(c) {
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
+  return tex;
+}
+
+/* hand-drawn earthen motifs — wobbly tree rings, spirals, dotted suns, sunbursts —
+   painted white-on-black into one tiling map; the background shader raises them
+   out of the paint as ridges of the same red, caught in the brushstrokes */
+function motifMapTexture(size = 1024) {
+  const c = document.createElement('canvas');
+  c.width = c.height = size;
+  const g = c.getContext('2d');
+  g.fillStyle = '#000';
+  g.fillRect(0, 0, size, size);
+  g.lineCap = 'round'; g.lineJoin = 'round';
+  const wobbleRing = (r, w) => { // one hand-drawn ring, radius drifting as the pen circles
+    g.beginPath();
+    let rr = r;
+    for (let i = 0; i <= 72; i++) {
+      const a = (i / 72) * Math.PI * 2;
+      rr = r + (rr - r) * 0.85 + (Math.random() - 0.5) * w;
+      i ? g.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : g.moveTo(Math.cos(a) * rr, Math.sin(a) * rr);
+    }
+    g.stroke();
+  };
+  const draws = [
+    m => { // tree rings
+      g.lineWidth = m * 0.028;
+      for (let r = m * 0.07; r < m * 0.9; r += m * (0.065 + Math.random() * 0.05)) wobbleRing(r, m * 0.045);
+    },
+    m => { // loose pen spiral
+      g.lineWidth = m * 0.05;
+      g.beginPath();
+      for (let t = 0; t <= 1; t += 0.004) {
+        const a = t * 4.1 * Math.PI * 2;
+        const r = t * m * 0.84 + Math.sin(a * 2.7) * m * 0.016;
+        t ? g.lineTo(Math.cos(a) * r, Math.sin(a) * r) : g.moveTo(0, 0);
+      }
+      g.stroke();
+    },
+    m => { // spiral heart, dotted halo, dotted rays
+      g.lineWidth = m * 0.05;
+      g.beginPath();
+      for (let t = 0; t <= 1; t += 0.005) {
+        const a = t * 3.2 * Math.PI * 2;
+        const r = t * m * 0.34;
+        t ? g.lineTo(Math.cos(a) * r, Math.sin(a) * r) : g.moveTo(0, 0);
+      }
+      g.stroke();
+      for (const [rr, n, s] of [[m * 0.55, 42, m * 0.025], [m * 0.64, 50, m * 0.02]]) {
+        for (let i = 0; i < n; i++) {
+          const a = (i / n) * Math.PI * 2;
+          g.beginPath();
+          g.arc(Math.cos(a) * rr + (Math.random() - 0.5) * m * 0.03,
+                Math.sin(a) * rr + (Math.random() - 0.5) * m * 0.03, s, 0, 7);
+          g.fill();
+        }
+      }
+      for (let i = 0; i < 14; i++) {
+        const a = (i / 14) * Math.PI * 2 + 0.12;
+        for (let k = 0; k < 3; k++) {
+          const r = m * (0.76 + k * 0.075);
+          g.beginPath(); g.arc(Math.cos(a) * r, Math.sin(a) * r, m * (0.023 - k * 0.005), 0, 7); g.fill();
+        }
+      }
+    },
+    m => { // radiating painted petals
+      for (let i = 0; i < 24; i++) {
+        const a = (i / 24) * Math.PI * 2 + (Math.random() - 0.5) * 0.1;
+        const r0 = m * (0.15 + Math.random() * 0.06), r1 = m * (0.68 + Math.random() * 0.22);
+        const ax = Math.cos(a), ay = Math.sin(a), bend = (Math.random() - 0.5) * m * 0.14;
+        g.lineWidth = m * (0.06 + Math.random() * 0.05);
+        g.beginPath();
+        g.moveTo(ax * r0, ay * r0);
+        g.quadraticCurveTo(ax * (r0 + r1) / 2 - ay * bend, ay * (r0 + r1) / 2 + ax * bend, ax * r1, ay * r1);
+        g.stroke();
+      }
+    }
+  ];
+  // one large emblem holds the center; a few small satellites keep it hand-made
+  const placed = [
+    { x: size / 2, y: size / 2, m: size * 0.27, d: 2, rot: (Math.random() - 0.5) * 0.5, a: 1 }
+  ];
+  let guard = 0;
+  while (placed.length < 6 && guard++ < 300) {
+    const m = size * (0.05 + Math.random() * 0.05);
+    const x = m * 1.15 + Math.random() * (size - m * 2.3);
+    const y = m * 1.15 + Math.random() * (size - m * 2.3);
+    if (placed.some(p => Math.hypot(x - p.x, y - p.y) < (m + p.m) * 1.25)) continue;
+    placed.push({ x, y, m, d: [0, 1, 3][placed.length % 3], rot: Math.random() * Math.PI * 2, a: 0.4 + Math.random() * 0.35 });
+  }
+  for (const p of placed) {
+    g.save();
+    g.translate(p.x, p.y);
+    g.rotate(p.rot);
+    g.strokeStyle = g.fillStyle = '#fff';
+    g.globalAlpha = p.a;
+    g.shadowColor = '#fff';
+    g.shadowBlur = size * 0.008; // a soft mound of paint beneath each line
+    draws[p.d](p.m);
+    g.restore();
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.anisotropy = 4;
+  return tex;
+}
+
+// engraved gold halo: rings + fine radiating lines + soft core
+function haloTexture(size = 1024) {
+  const c = document.createElement('canvas');
+  c.width = c.height = size;
+  const g = c.getContext('2d');
+  const m = size / 2;
+  g.translate(m, m);
+  g.strokeStyle = 'rgba(225,180,100,0.9)';
+  g.lineWidth = 2.5;
+  g.beginPath(); g.arc(0, 0, size * 0.255, 0, Math.PI * 2); g.stroke();
+  g.lineWidth = 1.2;
+  g.strokeStyle = 'rgba(225,180,100,0.5)';
+  g.beginPath(); g.arc(0, 0, size * 0.405, 0, Math.PI * 2); g.stroke();
+  for (let i = 0; i < 72; i++) {
+    const a = (i / 72) * Math.PI * 2;
+    const r0 = size * (0.275 + (i % 2) * 0.012);
+    const r1 = size * (i % 6 === 0 ? 0.385 : 0.345);
+    g.strokeStyle = `rgba(225,180,100,${i % 6 === 0 ? 0.55 : 0.3})`;
+    g.lineWidth = i % 6 === 0 ? 1.6 : 0.9;
+    g.beginPath();
+    g.moveTo(Math.cos(a) * r0, Math.sin(a) * r0);
+    g.lineTo(Math.cos(a) * r1, Math.sin(a) * r1);
+    g.stroke();
+  }
+  const grad = g.createRadialGradient(0, 0, 0, 0, 0, size * 0.26);
+  grad.addColorStop(0, 'rgba(255,210,130,0.5)');
+  grad.addColorStop(1, 'rgba(255,210,130,0)');
+  g.fillStyle = grad;
+  g.beginPath(); g.arc(0, 0, size * 0.26, 0, Math.PI * 2); g.fill();
+  return texFromCanvas(c);
+}
+
+// soft engraved cloud puff
+function cloudTexture(size = 512, seed = 1) {
+  const c = document.createElement('canvas');
+  c.width = size; c.height = size / 2;
+  const g = c.getContext('2d');
+  let s = seed;
+  const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < 30; i++) {
+    const x = size * (0.22 + rnd() * 0.56);
+    const y = c.height * (0.30 + rnd() * 0.42);
+    const r = size * (0.06 + rnd() * 0.1);
+    const grad = g.createRadialGradient(x, y, 0, x, y, r);
+    grad.addColorStop(0, 'rgba(240,170,120,0.13)');
+    grad.addColorStop(0.6, 'rgba(215,140,100,0.06)');
+    grad.addColorStop(1, 'rgba(215,140,100,0)');
+    g.fillStyle = grad;
+    g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
+  }
+  // a few engraved hatching strokes along the underside
+  g.strokeStyle = 'rgba(225,180,110,0.05)';
+  g.lineWidth = 1;
+  for (let i = 0; i < 12; i++) {
+    const y = c.height * (0.5 + rnd() * 0.32);
+    const x = size * (0.28 + rnd() * 0.4);
+    g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + 30, y - 5, x + 60 + rnd() * 40, y); g.stroke();
+  }
+  return texFromCanvas(c);
+}
+
+// real watercolor-paper texture: SVG turbulence run through diffuse lighting
+// gives the embossed cold-press tooth, then a warm parchment tint on top
+function makePaperTexture(size = 512) {
+  return new Promise(resolve => {
+    const svg =
+      `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}'>` +
+      `<filter id='p' x='0' y='0' width='100%' height='100%'>` +
+      `<feTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='5' seed='7' stitchTiles='stitch' result='n'/>` +
+      `<feDiffuseLighting in='n' lighting-color='#f7efdc' surfaceScale='1.9'>` +
+      `<feDistantLight azimuth='235' elevation='55'/>` +
+      `</feDiffuseLighting>` +
+      `</filter>` +
+      `<rect width='100%' height='100%' filter='url(#p)'/>` +
+      `</svg>`;
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = c.height = size;
+      const g = c.getContext('2d');
+      g.drawImage(img, 0, 0);
+      g.globalCompositeOperation = 'multiply';
+      g.fillStyle = '#eee0c4';
+      g.fillRect(0, 0, size, size);
+      g.globalCompositeOperation = 'source-over';
+      for (let i = 0; i < 170; i++) { // stray pulp fibres
+        g.fillStyle = `rgba(130,95,50,${0.03 + Math.random() * 0.05})`;
+        g.fillRect(Math.random() * size, Math.random() * size, 1 + Math.random() * 2, 1);
+      }
+      resolve(c);
+    };
+    img.onerror = () => { // fallback: flat parchment
+      const c = document.createElement('canvas');
+      c.width = c.height = size;
+      const g = c.getContext('2d');
+      g.fillStyle = '#e9dcc2';
+      g.fillRect(0, 0, size, size);
+      resolve(c);
+    };
+    img.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  });
+}
+
+// torn watercolor-paper edge: ragged tear line, exposed fibre core, loose fibres
+function tornEdgeStrip(paperC, w = 1600, h = 92) {
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const g = c.getContext('2d');
+
+  // the tear line: large undulation + medium waves + a fibre-snap random walk
+  const pts = [];
+  let drift = 0;
+  for (let x = 0; x <= w; x += 3) {
+    drift += (Math.random() - 0.5) * 5.5;
+    drift *= 0.93;
+    const y = h * 0.55
+      + Math.sin(x * 0.0042 + 1.3) * 11
+      + Math.sin(x * 0.017 + 4.1) * 4.5
+      + drift
+      + (Math.random() - 0.5) * 3;
+    pts.push([x, Math.max(12, Math.min(h - 16, y))]);
+  }
+  const path = () => {
+    g.beginPath();
+    g.moveTo(-4, h + 4);
+    g.lineTo(pts[0][0], pts[0][1]);
+    for (const p of pts) g.lineTo(p[0], p[1]);
+    g.lineTo(w + 4, h + 4);
+    g.closePath();
+  };
+
+  // the sheet casts a soft shadow on the scene behind it
+  path();
+  g.save();
+  g.shadowColor = 'rgba(15,2,7,0.65)';
+  g.shadowBlur = 20;
+  g.shadowOffsetY = -7;
+  g.fillStyle = '#e9dcc2';
+  g.fill();
+  g.restore();
+
+  g.save();
+  path();
+  g.clip();
+  // the sheet itself is the same watercolor paper
+  g.fillStyle = g.createPattern(paperC, 'repeat');
+  g.fillRect(0, 0, w, h);
+  // exposed fibre core — the lighter raw band where the surface ripped
+  g.strokeStyle = 'rgba(252,246,232,0.9)';
+  g.lineWidth = 3.5;
+  g.beginPath();
+  pts.forEach(([x, y], i) => {
+    const yy = y + 1.5 + Math.random() * 2.5;
+    i ? g.lineTo(x, yy) : g.moveTo(x, yy);
+  });
+  g.stroke();
+  // bruised line where the top layer delaminated
+  g.strokeStyle = 'rgba(122,86,46,0.3)';
+  g.lineWidth = 1.4;
+  g.beginPath();
+  pts.forEach(([x, y], i) => {
+    const yy = y + 6 + Math.random() * 3;
+    i ? g.lineTo(x, yy) : g.moveTo(x, yy);
+  });
+  g.stroke();
+  g.restore();
+
+  // loose fibres reaching past the tear
+  g.strokeStyle = 'rgba(250,243,228,0.8)';
+  for (let i = 0; i < 240; i++) {
+    const [x, y] = pts[(Math.random() * pts.length) | 0];
+    g.globalAlpha = 0.25 + Math.random() * 0.55;
+    g.lineWidth = 0.8 + Math.random() * 0.9;
+    g.beginPath();
+    g.moveTo(x, y + 1);
+    g.lineTo(x + (Math.random() - 0.5) * 5, y - (1.5 + Math.random() * 6));
+    g.stroke();
+  }
+  g.globalAlpha = 1;
+  return c.toDataURL();
+}
+
+/* ============ renderer + scroll-mapped world ============ */
+const canvas = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+const scene = new THREE.Scene();
+const FOV = 45, CAM_Z = 11;
+const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 160);
+camera.position.set(0, 0, CAM_Z);
+scene.add(camera);
+
+// world units visible per pixel at the z=0 plane — this ties scroll to camera travel
+const worldH = 2 * CAM_Z * Math.tan(THREE.MathUtils.degToRad(FOV / 2)); // ≈ 9.1
+let worldPerPx = worldH / window.innerHeight;
+let docH = 1, totalWorldH = 10;
+
+function measure() {
+  worldPerPx = worldH / window.innerHeight;
+  docH = Math.max(1, document.body.scrollHeight - window.innerHeight);
+  totalWorldH = (document.body.scrollHeight) * worldPerPx;
+}
+
+/* ============ background sky, parented to the camera ============ */
+const motifMap = motifMapTexture();
+const bgMat = new THREE.ShaderMaterial({
+  depthWrite: false,
+  uniforms: { uTime: { value: 0 }, uScroll: { value: 0 }, uShift: { value: 0 }, uAspect: { value: 1 }, uMotif: { value: motifMap } },
+  vertexShader: `
+    varying vec2 vUv;
+    void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+  fragmentShader: `
+    varying vec2 vUv;
+    uniform float uTime;
+    uniform float uScroll; // 0 → 1 down the page (drives only the colour grade)
+    uniform float uShift;  // scroll translation — the painting slides, never morphs
+    uniform float uAspect;
+    uniform sampler2D uMotif;
+    float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+    float noise(vec2 p) {
+      vec2 i = floor(p), f = fract(p);
+      f = f * f * (3.0 - 2.0 * f);
+      return mix(mix(hash(i), hash(i + vec2(1, 0)), f.x),
+                 mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), f.x), f.y);
+    }
+    float fbm(vec2 p) {
+      float v = 0.0, a = 0.5;
+      for (int i = 0; i < 5; i++) { v += a * noise(p); p *= 2.1; a *= 0.5; }
+      return v;
+    }
+    // the physical relief of the paint: pigment body, dragged bristle ridges,
+    // palette-knife slabs, dry granular pigment, and the emblem standing proud
+    float paintH(vec2 uv, vec2 r, vec2 muv) {
+      float f = fbm(uv * 3.0 + 3.2 * r);
+      float st = noise(uv * vec2(58.0, 7.5) + r * 2.5) * 0.7
+               + noise(uv * vec2(140.0, 16.0) - r * 1.5) * 0.3;
+      float knife = smoothstep(0.35, 0.72, fbm(uv * vec2(7.0, 11.0) + r * 2.0));
+      float grit = noise(uv * 210.0) * 0.6 + noise(uv * 420.0) * 0.4;
+      float mo = texture2D(uMotif, muv).r;
+      return f * 0.5 + st * 0.16 + knife * 0.34 + grit * 0.14 + mo * 0.45;
+    }
+    void main() {
+      vec2 uv = vUv;
+      // the painting is fixed — scrolling only slides it past the frame
+      vec2 puv = uv - vec2(0.0, uShift);
+      float drift = uTime * 0.004; // the slightest breathing, time only
+      // double domain-warp — pigment dragged through wet paint, not a gradient
+      vec2 q = vec2(fbm(puv * 3.0 + vec2(0.0, drift)),
+                    fbm(puv * 3.0 + vec2(5.2, 1.3 + drift)));
+      vec2 r = vec2(fbm(puv * 3.0 + 3.4 * q + vec2(1.7, 9.2)),
+                    fbm(puv * 3.0 + 3.4 * q + vec2(8.3, 2.8)));
+      float f = fbm(puv * 3.0 + 3.2 * r);
+      // the hand-drawn pattern worked into the paint — one large emblem per passage
+      vec2 muv = (puv - 0.5) * vec2(uAspect, 1.0) * 0.55 + 0.5;
+      muv += (r - vec2(0.47)) * 0.05;
+      float motif = texture2D(uMotif, muv).r;
+      // crimson night → ember dusk as you descend the page (cover-art grade)
+      vec3 deep = mix(vec3(0.075, 0.012, 0.028), vec3(0.115, 0.020, 0.040), uScroll);
+      vec3 mar  = mix(vec3(0.30, 0.050, 0.055), vec3(0.42, 0.100, 0.060), smoothstep(0.2, 0.7, uScroll));
+      vec3 col = mix(deep, mar, f);
+      // pigment pooling: rust + near-black where strokes overlap
+      col = mix(col, vec3(0.40, 0.085, 0.045), 0.4 * smoothstep(0.48, 0.8, fbm(puv * 5.0 + 2.0 * r)));
+      col = mix(col, vec3(0.045, 0.008, 0.02), 0.5 * smoothstep(0.62, 0.95, fbm(puv * 4.0 - 1.5 * q + vec2(3.1, 7.7))));
+      // the emblem reads as a brighter red worked into the same paint
+      col = mix(col, vec3(0.46, 0.105, 0.05), motif * 0.24);
+      // a warm hearth glow, anchored — it breathes, it does not travel
+      vec2 gpos = vec2(0.5 + 0.05 * sin(uTime * 0.05), 0.55 + 0.04 * cos(uTime * 0.04));
+      vec2 p = (uv - gpos) * vec2(1.6, 1.0);
+      float gl = exp(-dot(p, p) * 4.5);
+      col += vec3(0.62, 0.20, 0.07) * gl * (0.6 + 0.55 * f) * (0.5 + 0.1 * sin(uTime * 0.3));
+      // dry-brush streaks: long horizontal pulls that follow the warp
+      float strokes = noise(puv * vec2(58.0, 7.5) + r * 2.5);
+      strokes = strokes * 0.7 + noise(puv * vec2(140.0, 16.0) - r * 1.5) * 0.3;
+      col *= 0.94 + 0.12 * strokes;
+      // ===== thick impasto: a height field lit by raked gallery light =====
+      float e = 0.0022;
+      float H  = paintH(puv, r, muv);
+      float Hx = paintH(puv + vec2(e, 0.0), r, muv + vec2(e * uAspect * 0.55, 0.0));
+      float Hy = paintH(puv + vec2(0.0, e), r, muv + vec2(0.0, e * 0.55));
+      vec3 nrm = normalize(vec3((H - Hx) / e * 0.026, (H - Hy) / e * 0.026, 1.0));
+      vec3 L = normalize(vec3(-0.6, 0.7, 0.42));
+      float dif = clamp(dot(nrm, L), 0.0, 1.0);
+      col *= 0.70 + 0.62 * dif;                 // ridges catch the light, troughs settle into shadow
+      float spc = pow(clamp(dot(reflect(-L, nrm), vec3(0.0, 0.0, 1.0)), 0.0, 1.0), 26.0);
+      col += vec3(1.0, 0.72, 0.5) * spc * 0.05; // barely-there sheen — dried oil, not silk
+      // dry pigment speckle keeps the surface matte
+      col *= 0.95 + 0.10 * noise(puv * 300.0);
+      // canvas weave under everything
+      col *= 1.0 + (sin(puv.x * 720.0) * sin(puv.y * 540.0)) * 0.013;
+      col += (hash(puv * 917.3) - 0.5) * 0.018;
+      gl_FragColor = vec4(col, 1.0);
+    }`
+});
+const bg = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), bgMat);
+bg.position.set(0, 0, -60);
+camera.add(bg); // pinned to the view — everything else parallaxes against it
+function fitBg() {
+  const d = 60;
+  const h = 2 * d * Math.tan(THREE.MathUtils.degToRad(FOV / 2)) * 1.1;
+  bg.scale.set(h * camera.aspect, h, 1);
+  bgMat.uniforms.uAspect.value = camera.aspect;
+}
+
+/* ============ depth-layered furniture ============ */
+const world = new THREE.Group(); // everything that lives in page-space
+scene.add(world);
+
+// engraved clouds at far depths, drifting; they shear with scroll velocity
+const clouds = [];
+function scatterClouds(n = 9) {
+  for (const c of clouds) world.remove(c);
+  clouds.length = 0;
+  for (let i = 0; i < n; i++) {
+    const tex = cloudTexture(512, 7 + i * 13);
+    const w = 12 + Math.random() * 14;
+    const m = new THREE.Mesh(
+      new THREE.PlaneGeometry(w, w * 0.4),
+      new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, opacity: 0.5 })
+    );
+    const z = -9 - Math.random() * 18;
+    m.position.set((Math.random() - 0.5) * 34, 2 - Math.random() * (totalWorldH + 6), z);
+    m.userData = { driftV: (Math.random() - 0.5) * 0.12, x0: m.position.x };
+    clouds.push(m);
+    world.add(m);
+  }
+}
+
+// a single engraved halo, blessing the closing line
+const haloTex = haloTexture();
+function makeHalo(size) {
+  const h = new THREE.Mesh(
+    new THREE.PlaneGeometry(size, size),
+    new THREE.MeshBasicMaterial({
+      map: haloTex, transparent: true, opacity: 0,
+      blending: THREE.AdditiveBlending, depthWrite: false
+    })
+  );
+  world.add(h);
+  return h;
+}
+const haloClose = makeHalo(6.5);
+
+/* ============ flapping butterflies, cut from the lithograph ============ */
+// each specimen becomes two wing-planes hinged at the body so it can FLAP
+const butterflies = [];
+const specimens = []; // shared cutout halves: { texL, texR, arL, arR }
+
+function buildSpecimens(plate) {
+  // r: [fx, fy, fw, fh] fractions on the Millot plate
+  // m: fractional rects wiped after keying, to disconnect neighbouring specimens
+  const crops = [
+    { r: [0.330, 0.012, 0.345, 0.200], m: [[0, 0.68, 0.13, 1], [0.87, 0.68, 1, 1]] }, // yellow swallowtail
+    { r: [0.688, 0.183, 0.274, 0.148], m: [[0, 0.85, 0.12, 1]] },                     // peacock
+    { r: [0.000, 0.188, 0.294, 0.160], m: [] },                                       // tortoiseshell
+    { r: [0.295, 0.688, 0.420, 0.240], m: [] },                                       // pale-blue swallowtail
+    { r: [0.022, 0.573, 0.262, 0.134], m: [[0, 0.965, 1, 1]] },                       // brimstone
+    { r: [0.746, 0.575, 0.232, 0.128], m: [] }                                        // clouded yellow
+  ];
+  for (const { r: [fx, fy, fw, fh], m } of crops) {
+    const cut = trimAlpha(keyOutPaper(cropToCanvas(plate, fx, fy, fw, fh, 520), 52, m));
+    const mid = Math.round(cut.width / 2);
+    const half = (sx, w) => {
+      const c = document.createElement('canvas');
+      c.width = w; c.height = cut.height;
+      c.getContext('2d').drawImage(cut, sx, 0, w, cut.height, 0, 0, w, cut.height);
+      return c;
+    };
+    const L = half(0, mid), R = half(mid, cut.width - mid);
+    specimens.push({
+      texL: texFromCanvas(L), texR: texFromCanvas(R),
+      arL: L.height / L.width, arR: R.height / R.width
+    });
+  }
+}
+
+function makeButterfly(specIdx, ww, x, y, z) {
+  const s = specimens[specIdx];
+  const wl = ww / 2, wr = ww / 2;
+  const geoL = new THREE.PlaneGeometry(wl, wl * s.arL);
+  geoL.translate(-wl / 2, 0, 0); // hinge on the body (right edge)
+  const geoR = new THREE.PlaneGeometry(wr, wr * s.arR);
+  geoR.translate(wr / 2, 0, 0);  // hinge on the body (left edge)
+  const matOpts = { transparent: true, depthWrite: false, side: THREE.DoubleSide };
+  const wingL = new THREE.Mesh(geoL, new THREE.MeshBasicMaterial({ map: s.texL, ...matOpts }));
+  const wingR = new THREE.Mesh(geoR, new THREE.MeshBasicMaterial({ map: s.texR, ...matOpts }));
+  const g = new THREE.Group();
+  g.add(wingL, wingR);
+  g.rotation.x = -0.38 - Math.random() * 0.2; // tilt so the flap reads in 3d
+  g.position.set(x, y, z);
+  g.userData = {
+    wingL, wingR, x0: x, y0: y,
+    flapF: 1.6 + Math.random() * 1.4,       // wingbeats per second-ish
+    flapA: 0.5 + Math.random() * 0.35,      // flap amplitude
+    drift: (Math.random() < 0.5 ? -1 : 1) * (0.08 + Math.random() * 0.12),
+    bobF: 0.3 + Math.random() * 0.4,
+    bobA: 0.18 + Math.random() * 0.3,
+    yawA: 0.12 + Math.random() * 0.18,
+    phase: Math.random() * Math.PI * 2,
+    fp: Math.random() * Math.PI * 2, // integrated flap phase — frequency can change without glitching
+    // flight is lived in bouts: burst of beats, then a held-wing glide
+    tilt: g.rotation.x,
+    gliding: false,
+    modeT: 0.5 + Math.random() * 1.5,       // time left in the current bout
+    beat: 1,                                // eased flap intensity, 0 = glide, 1 = burst
+    hold: 0.55 + Math.random() * 0.3,       // glide dihedral — wings held up, not flat
+    pf: 0,                                  // last flap value, for downstroke lift
+    vx: 0, vy: 0, ox: 0, oy: 0              // featherweight body: velocity + offset
+  };
+  world.add(g);
+  butterflies.push(g);
+  return g;
+}
+
+/* ============ dom dressing: watercolor paper + torn edges + reveals ============ */
+async function dressDom() {
+  const io = new IntersectionObserver(entries => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add('shown'); io.unobserve(e.target); }
+  }, { threshold: 0.18 });
+  for (const el of document.querySelectorAll('.reveal')) io.observe(el);
+
+  const paperC = await makePaperTexture();
+  const paperUrl = paperC.toDataURL();
+  for (const el of document.querySelectorAll('.paper-bg')) {
+    el.style.backgroundImage = `url(${paperUrl})`;
+    el.style.backgroundSize = '512px 512px';
+  }
+  for (const el of document.querySelectorAll('.tear')) {
+    el.style.backgroundImage = `url(${tornEdgeStrip(paperC)})`;
+  }
+}
+
+/* ============ lenis-style smooth scroll ============ */
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+let target = 0, smooth = 0, vel = 0, programmatic = false;
+
+window.addEventListener('wheel', e => {
+  if (e.ctrlKey) return; // keep pinch-zoom native
+  e.preventDefault();
+  target = clamp(target + e.deltaY, 0, docH);
+}, { passive: false });
+
+window.addEventListener('scroll', () => {
+  if (programmatic) { programmatic = false; return; }
+  target = smooth = window.scrollY; // touch / keyboard / scrollbar stay native
+});
+
+// glide to anchors instead of jumping
+for (const a of document.querySelectorAll('a[href^="#"]')) {
+  a.addEventListener('click', e => {
+    const el = document.querySelector(a.getAttribute('href'));
+    if (!el) return;
+    e.preventDefault();
+    target = clamp(el.offsetTop, 0, docH);
+  });
+}
+
+/* ============ dom parallax: [data-depth] drift against scroll ============ */
+let depthEls = [], photoEls = [];
+function cacheDepthEls() {
+  depthEls = Array.from(document.querySelectorAll('[data-depth]')).map(el => {
+    const r = el.getBoundingClientRect();
+    return {
+      el, depth: parseFloat(el.dataset.depth),
+      center: r.top + window.scrollY + r.height / 2
+    };
+  });
+  photoEls = Array.from(document.querySelectorAll('.photo')).map(el => {
+    const r = el.getBoundingClientRect();
+    return { el, top: r.top + window.scrollY, h: r.height };
+  });
+}
+
+/* ============ placing the world along the page ============ */
+const pageYtoWorld = pageY => (window.innerHeight / 2 - pageY) * worldPerPx;
+const secCenter = sel => {
+  const el = document.querySelector(sel);
+  return el.offsetTop + el.offsetHeight / 2;
+};
+
+function placeWorld() {
+  measure();
+  // butterflies: rebuild (textures are shared, geometry is cheap)
+  while (butterflies.length) { butterflies.pop().removeFromParent(); }
+  if (specimens.length) {
+    // [section, specimen, worldWidth, dx, dyPx, z] — z is the depth layer:
+    // far (-12) drifts slowest, foreground (+4) sweeps past fastest
+    const plan = [
+      ['#hero',      0, 2.3, -3.6, -140,  1.8],
+      ['#hero',      1, 1.6,  4.0, -300, -2.5],
+      ['#hero',      4, 1.0, -5.2,  180, -7.0],
+      ['#manifesto', 5, 1.1,  5.4, -260, -6.0],
+      ['#manifesto', 2, 2.6, -5.6,  240,  3.6],
+      ['#about',     3, 1.9,  4.6, -120,  0.5],
+      ['#about',     0, 0.9, -6.0, -340, -9.0],
+      ['#podcast',   1, 2.8,  5.8,  300,  4.2],
+      ['#podcast',   4, 1.2, -5.4, -200, -4.5],
+      ['#community', 2, 1.0,  6.0, -380, -8.0],
+      ['#community', 5, 2.2, -5.2,  320,  2.8],
+      ['#voices',    1, 1.2, -5.8, -240, -5.2],
+      ['#voices',    4, 2.4,  5.8,  300,  3.4],
+      ['#closing',   3, 1.1,  5.0, -240, -5.5],
+      ['#closing',   0, 2.0, -4.4,  260,  3.0],
+      ['#closing',   1, 0.8,  6.2,  460, -11.0]
+    ];
+    for (const [sec, idx, ww, dx, dyPx, z] of plan) {
+      makeButterfly(idx, ww, dx, pageYtoWorld(secCenter(sec) + dyPx), z);
+    }
+    // companions: a few butterflies travel down the page with you,
+    // trailing the camera on a wandering, bouncy flight path
+    const followers = [
+      // [specimen, worldWidth, homeX, offY, z, ease, wander]
+      [2, 1.15, -4.8, -2.2,  1.4, 0.030, 2.4],
+      [5, 0.80,  5.1,  2.4, -0.8, 0.045, 1.8],
+      [1, 0.65,  4.2, -3.3,  2.2, 0.022, 2.9]
+    ];
+    for (const [idx, ww, hx, offY, z, ease, wander] of followers) {
+      const b = makeButterfly(idx, ww, hx, camera.position.y + offY, z);
+      b.userData.follow = { offY, ease, wander, fy: camera.position.y + offY, pwx: 0 };
+    }
+    // emergents: specks deep in the distance that fly toward you as their
+    // section approaches — perspective swells them on the way in
+    const approaches = [
+      // [specimen, worldWidth, x, section, dyPx, zFar, zNear]
+      [3, 1.7, -3.2, '#manifesto',  60, -19, 2.4],
+      [0, 1.5,  3.6, '#community', -40, -17, 1.9],
+      [5, 1.3, -4.0, '#voices',    120, -21, 3.0]
+    ];
+    for (const [idx, ww, hx, sec, dyPx, zFar, zNear] of approaches) {
+      const pageY = secCenter(sec) + dyPx;
+      const b = makeButterfly(idx, ww, hx, pageYtoWorld(pageY), zFar);
+      // arrives (zNear) as the section centers in view; sets off ~1.6 screens earlier
+      const p1 = clamp((pageY - window.innerHeight / 2) / docH, 0.02, 1);
+      const p0 = Math.max(0, p1 - (window.innerHeight * 1.6) / docH);
+      b.userData.approach = { zFar, zNear, p0, p1 };
+    }
+  }
+  // halo
+  haloClose.position.set(0, pageYtoWorld(secCenter('#closing')), -4);
+  // ambient furniture
+  scatterClouds();
+  cacheDepthEls();
+}
+
+/* ============ render loop ============ */
+const clock = new THREE.Clock();
+const mouse = new THREE.Vector2(0, 0);
+window.addEventListener('pointermove', e => {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -((e.clientY / window.innerHeight) * 2 - 1);
+});
+
+let lastNow = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  const now = clock.getElapsedTime();
+  const dt = Math.min(now - lastNow, 0.05);
+  lastNow = now;
+
+  // smooth scroll glide
+  const prev = smooth;
+  smooth += (target - smooth) * 0.085;
+  if (Math.abs(target - smooth) < 0.05) smooth = target;
+  if (Math.round(smooth) !== window.scrollY) {
+    programmatic = true;
+    window.scrollTo(0, Math.round(smooth));
+  }
+  vel = smooth - prev; // px/frame — feeds the wind
+  const speed = Math.min(Math.abs(vel) / 30, 1);
+
+  bgMat.uniforms.uTime.value = now;
+  bgMat.uniforms.uScroll.value = docH ? smooth / docH : 0;
+  bgMat.uniforms.uShift.value = (smooth / window.innerHeight) * 0.45; // slide, don't morph
+
+  // the camera descends through the layered world
+  camera.position.y = -smooth * worldPerPx + mouse.y * 0.14;
+  camera.position.x += (mouse.x * 0.3 - camera.position.x) * 0.04;
+
+  // butterflies fly in bouts — a burst of wingbeats, then a raised-wing glide
+  for (const b of butterflies) {
+    const u = b.userData;
+
+    // ---- the bout clock: flutter, glide, flutter again ----
+    u.modeT -= dt;
+    if (u.modeT <= 0) {
+      u.gliding = !u.gliding && Math.random() < 0.7; // mostly alternate, sometimes chain bursts
+      u.modeT = u.gliding ? 0.5 + Math.random() * 1.2 : 0.8 + Math.random() * 1.8;
+    }
+    // beat eases between burst and glide so the wings never snap;
+    // fast scrolling is wind — nobody glides in a gust
+    const want = u.gliding && speed < 0.5 ? 0.06 : 1;
+    u.beat += (want - u.beat) * (want > u.beat ? 0.10 : 0.045);
+    u.fp += dt * (u.flapF + speed * 0.9) * 6.0 * (0.22 + 0.78 * u.beat);
+    // the downstroke snaps quicker than the upstroke — wings aren't sinusoids
+    const flap = Math.sin(u.fp - 0.42 * Math.cos(u.fp));
+    const amp = u.flapA * (0.18 + 0.82 * u.beat) + speed * 0.08;
+    // gliding wings settle into a raised dihedral, trembling at the tips
+    const wing = (1 - u.beat) * u.hold + flap * amp;
+    // the inside wing shortens its stroke through a turn
+    const bias = clamp(b.rotation.z * 0.5, -0.12, 0.12);
+    u.wingL.rotation.y = wing * (1 + bias);
+    u.wingR.rotation.y = -wing * (1 - bias);
+    // and the downstroke cups both wings forward a touch
+    u.wingL.rotation.x = u.wingR.rotation.x = Math.max(0, -flap) * 0.1 * u.beat;
+
+    // ---- a featherweight body: downstrokes lift it, glides let it sink ----
+    const dF = flap - u.pf; u.pf = flap;
+    u.vy += Math.max(0, -dF) * 0.55 * u.beat // lift bought by each downstroke
+          - dt * 0.55                        // the slow pull of gravity
+          - u.oy * dt * 2.6;                 // tethered loosely to its station
+    u.vy *= 1 - dt * 1.6;
+    u.oy = clamp(u.oy + u.vy * dt, -0.9, 0.9);
+    if (Math.random() < dt * 0.4) u.vx += (Math.random() - 0.5) * 1.6; // a sudden whim
+    u.vx -= u.ox * dt * 1.4;
+    u.vx *= 1 - dt * 1.1;
+    u.ox = clamp(u.ox + u.vx * dt, -1.4, 1.4);
+    // body language: nose lifts when climbing, rocks against the wingbeat
+    b.rotation.x = u.tilt - u.vy * 0.22 + flap * 0.05 * u.beat;
+
+    if (u.follow) {
+      // companion: trails the camera down the page, lagging and wandering
+      const f = u.follow;
+      f.fy += (camera.position.y + f.offY - f.fy) * f.ease;
+      const wx = Math.sin(now * 0.21 + u.phase) * f.wander
+               + Math.sin(now * 0.67 + u.phase * 2.0) * 0.7;
+      b.position.x = u.x0 + wx + u.ox;
+      b.position.y = f.fy + Math.sin(now * 0.43 + u.phase) * 0.45 + u.oy;
+      // bank into the whole turn — the wander and the whims together
+      const turn = (wx - f.pwx) * 9.0 + u.vx * 0.6;
+      b.rotation.z += (clamp(-turn, -0.5, 0.5) - b.rotation.z) * 0.06;
+      f.pwx = wx;
+    } else {
+      b.position.x = u.x0 + Math.sin(now * 0.07 + u.phase) * 1.4 * u.drift * 10 + u.ox;
+      b.position.y = u.y0 + Math.sin(now * u.bobF + u.phase) * u.bobA * 0.6 + u.oy;
+      b.rotation.z += (Math.sin(now * 0.35 + u.phase) * u.yawA
+                     + clamp(-u.vx * 0.35, -0.4, 0.4) - b.rotation.z) * 0.08;
+    }
+    if (u.approach) {
+      // fly in from the deep — z eases toward the camera as the page progresses
+      const a = u.approach;
+      const pr = clamp((smooth / docH - a.p0) / Math.max(1e-4, a.p1 - a.p0), 0, 1);
+      const e = pr * pr * (3 - 2 * pr);
+      b.position.z = a.zFar + (a.zNear - a.zFar) * e;
+      // weave on the way in, and beat harder while climbing toward you
+      b.position.x += Math.sin(now * 0.5 + u.phase) * (1 - e) * 1.6;
+      u.fp += dt * e * (1 - e) * 8.0;
+    }
+  }
+
+  // clouds drift, and shear when you scroll fast
+  for (const c of clouds) {
+    const u = c.userData;
+    c.position.x = u.x0 + Math.sin(now * 0.03 + u.x0) * 2.2 + now * u.driftV % 6;
+    c.rotation.z += (clamp(vel * 0.0035, -0.06, 0.06) - c.rotation.z) * 0.06;
+  }
+
+  // the halo blooms as you arrive at it
+  {
+    const h = haloClose;
+    const d = Math.abs(h.position.y - camera.position.y);
+    const near = Math.exp(-d * d * 0.06);
+    h.material.opacity = near * (0.5 + 0.1 * Math.sin(now * 0.7));
+    h.rotation.z = now * 0.04;
+    const s = 0.9 + 0.12 * near + 0.012 * Math.sin(now * 0.5);
+    h.scale.set(s, s, 1);
+  }
+
+  // dom parallax — decorative numerals slide against the scroll
+  const viewCenter = smooth + window.innerHeight / 2;
+  for (const d of depthEls) {
+    d.el.style.transform = `translateY(${(viewCenter - d.center) * d.depth}px)`;
+  }
+  // glossy prints — sheen sweeps across each polaroid as it crosses the viewport
+  for (const p of photoEls) {
+    const prog = clamp((smooth + window.innerHeight - p.top) / (window.innerHeight + p.h), 0, 1);
+    p.el.style.setProperty('--gp', (prog * 170 - 35) + '%');
+  }
+
+  renderer.render(scene, camera);
+}
+
+/* ============ boot ============ */
+function resize() {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  fitBg();
+}
+let resizeTimer;
+window.addEventListener('resize', () => {
+  resize();
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(placeWorld, 220);
+});
+
+resize();
+dressDom();
+target = smooth = window.scrollY;
+
+loadImage('assets/millot-plate.jpg').then(plate => {
+  buildSpecimens(plate);
+  placeWorld();
+  document.body.classList.add('lit');
+}).catch(() => {
+  placeWorld();
+  document.body.classList.add('lit');
+});
+animate();
+</script>
+</body>
+</html>
