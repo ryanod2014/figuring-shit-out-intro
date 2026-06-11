@@ -1274,23 +1274,33 @@ function startFavicon() {
   if (!s) return;
   const L = s.texL.image, R = s.texR.image; // the cutout half-canvases
   const link = document.getElementById('favicon');
-  const N = 64, STEPS = 10, frames = [];
+  const N = 64, STEPS = 16, frames = [];
   const hw = N * 0.47; // half-span, wings fully spread
   const fit = Math.min(1, (N * 0.94) / (hw * Math.max(s.arL, s.arR)));
   for (let i = 0; i < STEPS; i++) {
+    const th = (i / STEPS) * Math.PI * 2;
     const c = document.createElement('canvas');
     c.width = c.height = N;
     const x = c.getContext('2d');
-    // wings swing ±~63deg; their projected width breathes with the cosine
-    const f = Math.max(Math.cos(Math.sin((i / STEPS) * Math.PI * 2) * 1.1), 0.12);
+    // wings swing ±~72deg; their projected width breathes with the cosine
+    const f = Math.max(Math.cos(Math.sin(th) * 1.25), 0.14);
+    // the body bobs against the stroke so no two frames repeat — the loop
+    // reads as one continuous beat instead of a ping-ponging scale
+    const dy = 2.2 * Math.sin(th);
     const w = hw * fit * f, cx = N / 2;
-    x.drawImage(L, cx - w, (N - hw * s.arL * fit) / 2, w, hw * s.arL * fit);
-    x.drawImage(R, cx, (N - hw * s.arR * fit) / 2, w, hw * s.arR * fit);
+    x.drawImage(L, cx - w, dy + (N - hw * s.arL * fit) / 2, w, hw * s.arL * fit);
+    x.drawImage(R, cx, dy + (N - hw * s.arR * fit) / 2, w, hw * s.arR * fit);
     frames.push(c.toDataURL('image/png'));
   }
-  let i = 0;
+  // background tabs throttle timers to ~1fps, which would turn the flap into
+  // a jump-cut slideshow — so it only flaps while the page is visible, and
+  // otherwise rests on the open-winged pose.
+  let i = 0, timer = null;
+  const play = () => { if (!timer) timer = setInterval(() => { link.href = frames[i = (i + 1) % STEPS]; }, 80); };
+  const stop = () => { clearInterval(timer); timer = null; i = 0; link.href = frames[0]; };
+  document.addEventListener('visibilitychange', () => document.hidden ? stop() : play());
   link.href = frames[0];
-  setInterval(() => { link.href = frames[i = (i + 1) % frames.length]; }, 100);
+  if (!document.hidden) play();
 }
 
 /* ============ dom dressing: watercolor paper + torn edges + reveals ============ */
