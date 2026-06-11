@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Figuring Sh!t Out — a podcast by Vanessa Fontana</title>
+<link rel="icon" id="favicon" href="data:," />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet" />
@@ -1265,6 +1266,33 @@ function makeButterfly(specIdx, ww, x, y, z) {
   return g;
 }
 
+/* ============ animated favicon: the swallowtail flaps in the tab ============ */
+// pre-renders one wingbeat as data-url frames, then cycles the <link> href.
+// chrome + firefox animate; safari just keeps the open-winged first frame.
+function startFavicon() {
+  const s = specimens[0];
+  if (!s) return;
+  const L = s.texL.image, R = s.texR.image; // the cutout half-canvases
+  const link = document.getElementById('favicon');
+  const N = 64, STEPS = 10, frames = [];
+  const hw = N * 0.47; // half-span, wings fully spread
+  const fit = Math.min(1, (N * 0.94) / (hw * Math.max(s.arL, s.arR)));
+  for (let i = 0; i < STEPS; i++) {
+    const c = document.createElement('canvas');
+    c.width = c.height = N;
+    const x = c.getContext('2d');
+    // wings swing ±~63deg; their projected width breathes with the cosine
+    const f = Math.max(Math.cos(Math.sin((i / STEPS) * Math.PI * 2) * 1.1), 0.12);
+    const w = hw * fit * f, cx = N / 2;
+    x.drawImage(L, cx - w, (N - hw * s.arL * fit) / 2, w, hw * s.arL * fit);
+    x.drawImage(R, cx, (N - hw * s.arR * fit) / 2, w, hw * s.arR * fit);
+    frames.push(c.toDataURL('image/png'));
+  }
+  let i = 0;
+  link.href = frames[0];
+  setInterval(() => { link.href = frames[i = (i + 1) % frames.length]; }, 100);
+}
+
 /* ============ dom dressing: watercolor paper + torn edges + reveals ============ */
 async function dressDom() {
   const io = new IntersectionObserver(entries => {
@@ -1566,6 +1594,7 @@ target = smooth = window.scrollY;
 
 loadImage('assets/millot-plate.jpg').then(plate => {
   buildSpecimens(plate);
+  startFavicon();
   placeWorld();
   document.body.classList.add('lit');
 }).catch(() => {
