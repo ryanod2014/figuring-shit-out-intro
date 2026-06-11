@@ -71,7 +71,47 @@
     opacity: 0.85; transition: color 0.3s, opacity 0.3s;
   }
   #navlinks a:hover { color: var(--goldL); opacity: 1; }
-  @media (max-width: 640px) { #navlinks a:nth-child(n+4) { display: none; } }
+
+  /* hamburger + dropdown (mobile only) */
+  #burger {
+    display: none; pointer-events: auto;
+    background: none; border: none; padding: 8px; margin: -8px;
+    cursor: pointer; flex-direction: column; gap: 5px;
+  }
+  #burger span {
+    display: block; width: 22px; height: 2px; border-radius: 1px;
+    background: var(--gold);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  nav.open #burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  nav.open #burger span:nth-child(2) { opacity: 0; }
+  nav.open #burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  #mobilemenu {
+    display: none;
+    position: absolute; top: calc(100% - 4px); right: 16px;
+    flex-direction: column; min-width: 220px;
+    background: rgba(24,3,9,0.92);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border: 1px solid rgba(193,154,86,0.35); border-radius: 6px;
+    padding: 6px 0;
+    opacity: 0; transform: translateY(-8px); pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  #mobilemenu a {
+    color: var(--gold); text-transform: uppercase;
+    font-size: 12px; letter-spacing: 0.28em;
+    padding: 14px 22px;
+  }
+  #mobilemenu a + a { border-top: 1px solid rgba(193,154,86,0.16); }
+  nav.open #mobilemenu { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+  @media (max-width: 640px) {
+    nav { padding: 16px 20px; align-items: center; }
+    #brand { font-size: 17px; white-space: nowrap; }
+    #navlinks { display: none; }
+    #burger { display: flex; }
+    #mobilemenu { display: flex; }
+  }
 
   /* ---------- layout ---------- */
   main { position: relative; z-index: 2; }
@@ -283,6 +323,25 @@
     animation: cueDrop 2.2s ease-in-out infinite;
   }
   @keyframes cueDrop { 0%,100% { transform: scaleY(0.4); transform-origin: top; opacity: 0.4; } 50% { transform: scaleY(1); opacity: 1; } }
+
+  /* ---------- mobile ---------- */
+  /* small-viewport units ride out the collapsing iOS/Android browser chrome */
+  @supports (min-height: 100svh) {
+    .sky { min-height: 100svh; }
+    #closing { min-height: 110svh; }
+  }
+  @media (max-width: 640px) {
+    .kicker { letter-spacing: 0.3em; text-indent: 0.3em; gap: 1em; }
+    .kicker::before, .kicker::after { width: 2em; }
+    .vow { grid-template-columns: 2.6em 1fr; }
+    .ctas { gap: 12px; }
+    .cta { padding: 13px 26px; font-size: 12px; }
+    .tear { height: 60px; }
+    .paper { margin: 13vh 0; }
+    .quote { padding-left: 18px; margin: 24px 0; }
+    #mailing input { flex: 1 1 100%; min-width: 0; }
+    #fine { flex-direction: column; gap: 6px; }
+  }
 </style>
 </head>
 <body>
@@ -291,6 +350,13 @@
 <nav>
   <a id="brand" href="#hero">Figuring <em>Sh!t</em> Out</a>
   <div id="navlinks">
+    <a href="#manifesto">About</a>
+    <a href="#podcast">Listen</a>
+    <a href="#community">Metamorphosis</a>
+    <a href="https://www.figuringshtout.com/contact" target="_blank" rel="noopener">Contact</a>
+  </div>
+  <button id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  <div id="mobilemenu">
     <a href="#manifesto">About</a>
     <a href="#podcast">Listen</a>
     <a href="#community">Metamorphosis</a>
@@ -969,7 +1035,8 @@ function tornEdgeStrip(paperC, w = 1600, h = 92) {
 /* ============ renderer + scroll-mapped world ============ */
 const canvas = document.getElementById('scene');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+// phones get a gentler pixel ratio — the painterly bg hides it, the battery notices
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 700 ? 1.75 : 2));
 
 const scene = new THREE.Scene();
 const FOV = 45, CAM_Z = 11;
@@ -1239,6 +1306,20 @@ for (const a of document.querySelectorAll('a[href^="#"]')) {
     e.preventDefault();
     target = clamp(el.offsetTop, 0, docH);
   });
+}
+
+// mobile hamburger dropdown
+{
+  const navEl = document.querySelector('nav');
+  const burger = document.getElementById('burger');
+  const setMenu = open => {
+    navEl.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', String(open));
+  };
+  burger.addEventListener('click', () => setMenu(!navEl.classList.contains('open')));
+  for (const a of document.querySelectorAll('#mobilemenu a')) {
+    a.addEventListener('click', () => setMenu(false));
+  }
 }
 
 /* ============ dom parallax: [data-depth] drift against scroll ============ */
